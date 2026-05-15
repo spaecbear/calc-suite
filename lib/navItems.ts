@@ -1,4 +1,5 @@
 export type CalcId =
+  | "basic"
   | "unit"
   | "tip"
   | "loan"
@@ -15,6 +16,12 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
+  {
+    id: "basic",
+    label: "Calculator",
+    icon: "Hash",
+    description: "Standard calculator with keyboard support",
+  },
   {
     id: "unit",
     label: "Unit Convert",
