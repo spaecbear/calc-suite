@@ -1,0 +1,35 @@
+{
+  "identifier" : "CalcSuiteStore",
+  "nonConsumableProducts" : [
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "pro_unlock_001",
+      "localizations" : [
+        {
+          "description" : "Remove all ads and unlock premium calculators forever.",
+          "displayName" : "CalcSuite Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.calcsuite.app.pro",
+      "referenceName" : "CalcSuite Pro",
+      "type" : "NonConsumable"
+    }
+  ],
+  "consumableProducts" : [],
+  "subscriptionGroups" : [],
+  "autoRenewableSubscriptions" : [],
+  "version" : {
+    "major" : 3,
+    "minor" : 0,
+    "patch" : 0
+  },
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_interruptedPurchasesEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_askToBuyEnabled" : false,
+    "_timeRate" : 1
+  }
+}
