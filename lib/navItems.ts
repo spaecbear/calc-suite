@@ -1,4 +1,5 @@
 export type CalcId =
+  // Free
   | "basic"
   | "unit"
   | "tip"
@@ -6,16 +7,25 @@ export type CalcId =
   | "date"
   | "discount"
   | "fuel"
-  | "split";
+  | "split"
+  // Pro
+  | "derivative"
+  | "integral"
+  | "ohm"
+  | "scientific"
+  | "bmi"
+  | "compound";
 
 export interface NavItem {
   id: CalcId;
   label: string;
   icon: string;
   description: string;
+  isPro?: boolean;
 }
 
 export const NAV_ITEMS: NavItem[] = [
+  // ── Free ──────────────────────────────────────────────
   {
     id: "basic",
     label: "Calculator",
@@ -64,4 +74,51 @@ export const NAV_ITEMS: NavItem[] = [
     icon: "Users",
     description: "Divide expenses among a group",
   },
+
+  // ── Pro ───────────────────────────────────────────────
+  {
+    id: "derivative",
+    label: "Derivative",
+    icon: "TrendingUp",
+    description: "Symbolic differentiation with rules",
+    isPro: true,
+  },
+  {
+    id: "integral",
+    label: "Integral",
+    icon: "Sigma",
+    description: "Definite integral & area under curve",
+    isPro: true,
+  },
+  {
+    id: "ohm",
+    label: "Ohm's Law",
+    icon: "Zap",
+    description: "Solve V, I, R, P from any two values",
+    isPro: true,
+  },
+  {
+    id: "scientific",
+    label: "Scientific",
+    icon: "FlaskConical",
+    description: "sin/cos/tan/log/ln/√ with deg & rad",
+    isPro: true,
+  },
+  {
+    id: "bmi",
+    label: "BMI",
+    icon: "Activity",
+    description: "Body mass index with health categories",
+    isPro: true,
+  },
+  {
+    id: "compound",
+    label: "Compound Interest",
+    icon: "TrendingUp",
+    description: "Growth over time with compounding",
+    isPro: true,
+  },
 ];
+
+export const FREE_IDS: CalcId[] = NAV_ITEMS.filter((i) => !i.isPro).map((i) => i.id);
+export const PRO_IDS: CalcId[] = NAV_ITEMS.filter((i) => i.isPro).map((i) => i.id);

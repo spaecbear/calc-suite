@@ -9,9 +9,10 @@ import { type CalcId } from "@/lib/navItems";
 interface HeaderProps {
   active: CalcId;
   onChange: (id: CalcId) => void;
+  isPro?: boolean;
 }
 
-export function Header({ active, onChange }: HeaderProps) {
+export function Header({ active, onChange, isPro = false }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -40,7 +41,7 @@ export function Header({ active, onChange }: HeaderProps) {
 
       {/* Calculator selector — grows to fill space */}
       <div className="flex-1">
-        <CalcSelector active={active} onChange={onChange} />
+        <CalcSelector active={active} onChange={onChange} isPro={isPro} />
       </div>
 
       {/* Theme toggle */}

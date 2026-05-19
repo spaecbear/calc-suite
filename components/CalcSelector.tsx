@@ -10,7 +10,13 @@ import {
   Tag,
   Fuel,
   Users,
+  TrendingUp,
+  Sigma,
+  Zap,
+  FlaskConical,
+  Activity,
   ChevronDown,
+  Lock,
   type LucideIcon,
 } from "lucide-react";
 import { NAV_ITEMS, type CalcId } from "@/lib/navItems";
@@ -24,14 +30,20 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Tag,
   Fuel,
   Users,
+  TrendingUp,
+  Sigma,
+  Zap,
+  FlaskConical,
+  Activity,
 };
 
 interface CalcSelectorProps {
   active: CalcId;
   onChange: (id: CalcId) => void;
+  isPro?: boolean;
 }
 
-export function CalcSelector({ active, onChange }: CalcSelectorProps) {
+export function CalcSelector({ active, onChange, isPro = false }: CalcSelectorProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -40,81 +52,85 @@ export function CalcSelector({ active, onChange }: CalcSelectorProps) {
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const select = (id: CalcId) => {
-    onChange(id);
-    setOpen(false);
-  };
+  const select = (id: CalcId) => { onChange(id); setOpen(false); };
+
+  const freeItems = NAV_ITEMS.filter((i) => !i.isPro);
+  const proItems  = NAV_ITEMS.filter((i) => i.isPro);
 
   return (
     <div ref={ref} className="relative">
-      {/* Trigger button */}
+      {/* Trigger */}
       <button
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition-all hover:opacity-80"
-        style={{
-          background: "var(--muted)",
-          borderColor: "var(--card-border)",
-          color: "var(--foreground)",
-        }}
+        style={{ background: "var(--muted)", borderColor: "var(--card-border)", color: "var(--foreground)" }}
       >
         <ActiveIcon size={15} style={{ color: "var(--accent)" }} />
         <span>{activeItem.label}</span>
-        <ChevronDown
-          size={13}
-          className="transition-transform"
-          style={{
-            color: "var(--muted-foreground)",
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-          }}
-        />
+        {activeItem.isPro && (
+          <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md" style={{ background: "var(--accent)", color: "#fff" }}>PRO</span>
+        )}
+        <ChevronDown size={13} className="transition-transform" style={{ color: "var(--muted-foreground)", transform: open ? "rotate(180deg)" : "rotate(0deg)" }} />
       </button>
 
-      {/* Dropdown panel */}
+      {/* Dropdown */}
       {open && (
         <div
-          className="absolute left-0 top-full mt-1.5 z-50 w-64 rounded-2xl border shadow-lg overflow-hidden"
-          style={{
-            background: "var(--card)",
-            borderColor: "var(--card-border)",
-          }}
+          className="absolute left-0 top-full mt-1.5 z-50 w-72 rounded-2xl border shadow-lg overflow-hidden"
+          style={{ background: "var(--card)", borderColor: "var(--card-border)" }}
         >
-          {NAV_ITEMS.map((item) => {
-            const Icon = ICON_MAP[item.icon];
-            const isActive = item.id === active;
-            return (
-              <button
-                key={item.id}
-                onClick={() => select(item.id)}
-                className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors hover:opacity-80"
-                style={{
-                  background: isActive ? "var(--accent)" : "transparent",
-                  color: isActive ? "#fff" : "var(--foreground)",
-                  borderBottom: "1px solid var(--card-border)",
-                }}
-              >
-                <Icon size={15} className="shrink-0" />
-                <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-medium">{item.label}</span>
-                  <span
-                    className="text-xs truncate"
-                    style={{ color: isActive ? "rgba(255,255,255,0.7)" : "var(--muted-foreground)" }}
-                  >
-                    {item.description}
-                  </span>
-                </div>
-              </button>
-            );
-          })}
+          {/* Free section */}
+          <div className="px-3 pt-2.5 pb-1">
+            <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--muted-foreground)" }}>Free</p>
+          </div>
+          {freeItems.map((item) => <DropdownRow key={item.id} item={item} active={active} onSelect={select} isPro={false} />)}
+
+          {/* Pro section */}
+          <div className="px-3 pt-3 pb-1 border-t mt-1" style={{ borderColor: "var(--card-border)" }}>
+            <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: "var(--accent)" }}>Pro</p>
+          </div>
+          {proItems.map((item) => <DropdownRow key={item.id} item={item} active={active} onSelect={select} isPro={isPro} />)}
         </div>
       )}
     </div>
+  );
+}
+
+function DropdownRow({ item, active, onSelect, isPro }: {
+  item: typeof NAV_ITEMS[0];
+  active: CalcId;
+  onSelect: (id: CalcId) => void;
+  isPro: boolean;
+}) {
+  const Icon = ICON_MAP[item.icon];
+  const isActive = item.id === active;
+  const locked = item.isPro && !isPro;
+
+  return (
+    <button
+      onClick={() => onSelect(item.id)}
+      className="w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors hover:opacity-80"
+      style={{
+        background: isActive ? "var(--accent)" : "transparent",
+        color: isActive ? "#fff" : locked ? "var(--muted-foreground)" : "var(--foreground)",
+        borderBottom: "1px solid var(--card-border)",
+      }}
+    >
+      <Icon size={15} className="shrink-0" />
+      <div className="flex flex-col min-w-0 flex-1">
+        <span className="text-sm font-medium">{item.label}</span>
+        <span className="text-xs truncate opacity-60">{item.description}</span>
+      </div>
+      {locked && <Lock size={12} className="shrink-0" style={{ color: "var(--accent)" }} />}
+      {item.isPro && !locked && !isActive && (
+        <span className="text-[9px] font-bold px-1 py-0.5 rounded" style={{ background: "var(--accent)", color: "#fff" }}>PRO</span>
+      )}
+    </button>
   );
 }
