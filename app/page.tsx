@@ -6,6 +6,7 @@ import { AdBanner } from "@/components/AdBanner";
 import { ProGate } from "@/components/ProGate";
 import { type CalcId, PRO_IDS } from "@/lib/navItems";
 import { isProUser } from "@/lib/purchases";
+import { initAds, showBanner, hideBanner } from "@/lib/ads";
 
 // Free calculators
 import BasicCalculator from "@/components/calculators/BasicCalculator";
@@ -49,7 +50,7 @@ export default function Home() {
   const [active, setActive] = useState<CalcId>("basic");
   const [isPro, setIsPro]   = useState(false);
 
-  // Check RevenueCat on mount — renders immediately, upgrades silently
+  // 1. Check RevenueCat pro status on mount
   useEffect(() => {
     let cancelled = false;
     isProUser()
@@ -58,11 +59,27 @@ export default function Home() {
     return () => { cancelled = true; };
   }, []);
 
+  // 2. Init AdMob once, then show/hide banner based on pro status
+  useEffect(() => {
+    initAds().then(() => {
+      if (isPro) {
+        hideBanner();
+      } else {
+        showBanner();
+      }
+    });
+  }, [isPro]);
+
   const isProCalc = PRO_IDS.includes(active);
   const locked    = isProCalc && !isPro;
 
+  function handleUnlock() {
+    setIsPro(true);
+    hideBanner(); // remove ad immediately on upgrade
+  }
+
   function renderCalc() {
-    if (locked) return <ProGate onUnlock={() => setIsPro(true)} />;
+    if (locked) return <ProGate onUnlock={handleUnlock} />;
     return FREE_CALCS[active] ?? PRO_CALCS[active] ?? null;
   }
 
@@ -71,18 +88,18 @@ export default function Home() {
       <Header active={active} onChange={setActive} isPro={isPro} />
 
       <main className="flex-1 px-4 py-5 overflow-y-auto">
-        {/* Top ad — only for free users */}
-        {!isPro && (
-          <div className="max-w-lg mx-auto mb-4">
-            <AdBanner position="top" />
-          </div>
-        )}
-
         {/* Calculator */}
         <div className="max-w-lg mx-auto">
           {renderCalc()}
         </div>
 
+        {/* Spacer so content doesn't hide under the native bottom banner.
+            Invisible on device; visible placeholder on web/dev. */}
+        {!isPro && (
+          <div className="max-w-lg mx-auto mt-4">
+            <AdBanner />
+          </div>
+        )}
       </main>
     </div>
   );
