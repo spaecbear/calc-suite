@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, Star, Zap, TrendingUp, FlaskConical } from "lucide-react";
+import { Lock, Star, Zap, TrendingUp, FlaskConical, BanIcon } from "lucide-react";
 import { purchasePro, restorePurchases } from "@/lib/purchases";
 
 interface ProGateProps {
@@ -9,6 +9,7 @@ interface ProGateProps {
 }
 
 const FEATURES = [
+  { icon: BanIcon,    label: "No Ads",               desc: "Completely ad-free experience" },
   { icon: TrendingUp, label: "Derivative Calculator", desc: "Symbolic differentiation" },
   { icon: TrendingUp, label: "Compound Interest",    desc: "Growth projections & tables" },
   { icon: Zap,        label: "Ohm's Law",            desc: "Solve V, I, R, P" },
@@ -63,7 +64,7 @@ export function ProGate({ onUnlock }: ProGateProps) {
           <Lock size={28} />
         </div>
         <h2 className="text-2xl font-bold mb-1">CalcSuite Pro</h2>
-        <p className="text-white/80 text-sm">Unlock advanced calculators — one-time purchase</p>
+        <p className="text-white/80 text-sm">Remove ads &amp; unlock advanced calculators</p>
         <div className="mt-4 text-4xl font-extrabold">$2.99</div>
       </div>
 

@@ -83,12 +83,6 @@ export default function Home() {
           {renderCalc()}
         </div>
 
-        {/* Bottom ad — only for free users */}
-        {!isPro && (
-          <div className="max-w-lg mx-auto mt-4">
-            <AdBanner position="bottom" />
-          </div>
-        )}
       </main>
     </div>
   );
