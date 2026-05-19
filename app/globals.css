@@ -41,11 +41,21 @@
   box-sizing: border-box;
 }
 
+/* Apply theme background to html so iOS status bar area matches the app */
+html {
+  background-color: var(--card);
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Push the sticky header below the iOS status bar safe area */
+header.app-header {
+  padding-top: env(safe-area-inset-top);
 }
 
 input[type="number"]::-webkit-inner-spin-button,

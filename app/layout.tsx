@@ -1,6 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover", // required for env(safe-area-inset-*) to return real values
+};
 
 export const metadata: Metadata = {
   title: "CalcSuite — All-in-One Calculators",

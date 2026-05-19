@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'CalcSuite',
   webDir: 'out',
   ios: {
-    contentInset: 'automatic',
+    contentInset: 'never',  // WebView fills full screen; CSS handles safe areas
   },
   plugins: {
     AdMob: {

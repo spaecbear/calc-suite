@@ -5,6 +5,7 @@ import { Sun, Moon, Calculator } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CalcSelector } from "@/components/CalcSelector";
 import { type CalcId } from "@/lib/navItems";
+import { syncStatusBar } from "@/lib/statusBar";
 
 interface HeaderProps {
   active: CalcId;
@@ -18,9 +19,21 @@ export function Header({ active, onChange, isPro = false }: HeaderProps) {
 
   useEffect(() => setMounted(true), []);
 
+  // Keep native status bar text colour in sync with the active theme
+  useEffect(() => {
+    if (!mounted) return;
+    const resolved = theme === "system"
+      ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : (theme as "dark" | "light");
+    syncStatusBar(resolved);
+  }, [theme, mounted]);
+
+  // Also sync once immediately on first mount before theme is known
+  useEffect(() => { syncStatusBar("dark"); }, []);
+
   return (
     <header
-      className="sticky top-0 z-50 flex items-center gap-3 px-4 py-3 border-b"
+      className="app-header sticky top-0 z-50 flex items-center gap-3 px-4 py-3 border-b"
       style={{
         background: "var(--card)",
         borderColor: "var(--card-border)",
