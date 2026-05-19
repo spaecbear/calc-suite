@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, Star, Zap, TrendingUp, FlaskConical, BanIcon } from "lucide-react";
+import { Lock, Star, Zap, TrendingUp, FlaskConical, BanIcon, Activity, Sigma } from "lucide-react";
 import { purchasePro, restorePurchases } from "@/lib/purchases";
 
 interface ProGateProps {
@@ -9,13 +9,14 @@ interface ProGateProps {
 }
 
 const FEATURES = [
-  { icon: BanIcon,    label: "No Ads",               desc: "Completely ad-free experience" },
-  { icon: TrendingUp, label: "Derivative Calculator", desc: "Symbolic differentiation" },
-  { icon: TrendingUp, label: "Compound Interest",    desc: "Growth projections & tables" },
-  { icon: Zap,        label: "Ohm's Law",            desc: "Solve V, I, R, P" },
-  { icon: FlaskConical, label: "Scientific Calc",    desc: "Trig, log, powers & more" },
-  { icon: Star,       label: "Integral Calculator",  desc: "Definite integral & area" },
-  { icon: Star,       label: "BMI Calculator",       desc: "Health categories & gauge" },
+  { icon: BanIcon,      label: "No Ads"          },
+  { icon: TrendingUp,   label: "Derivative"       },
+  { icon: Sigma,        label: "Integral"         },
+  { icon: Zap,          label: "Ohm's Law"        },
+  { icon: FlaskConical, label: "Scientific Calc"  },
+  { icon: Activity,     label: "BMI"              },
+  { icon: TrendingUp,   label: "Compound Interest"},
+  { icon: Star,         label: "Future updates"   },
 ];
 
 export function ProGate({ onUnlock }: ProGateProps) {
@@ -55,48 +56,41 @@ export function ProGate({ onUnlock }: ProGateProps) {
       className="rounded-2xl border shadow-sm overflow-hidden"
       style={{ background: "var(--card)", borderColor: "var(--card-border)" }}
     >
-      {/* Hero */}
+      {/* Compact hero */}
       <div
-        className="px-6 py-8 text-center"
+        className="px-5 py-5 flex items-center gap-4"
         style={{ background: "var(--accent)", color: "#fff" }}
       >
-        <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-3">
-          <Lock size={28} />
+        <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+          <Lock size={22} />
         </div>
-        <h2 className="text-2xl font-bold mb-1">CalcSuite Pro</h2>
-        <p className="text-white/80 text-sm">Remove ads &amp; unlock advanced calculators</p>
-        <div className="mt-4 text-4xl font-extrabold">$2.99</div>
+        <div className="flex-1 min-w-0">
+          <h2 className="text-lg font-bold leading-tight">CalcSuite Pro</h2>
+          <p className="text-white/80 text-xs mt-0.5">Remove ads &amp; unlock everything</p>
+        </div>
+        <div className="text-3xl font-extrabold shrink-0">$2.99</div>
       </div>
 
-      {/* Feature list */}
-      <div className="px-5 py-4 space-y-3">
-        {FEATURES.map(({ icon: Icon, label, desc }) => (
-          <div key={label} className="flex items-center gap-3">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-              style={{ background: "var(--accent)", opacity: 0.15 }}
-            />
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 absolute ml-0"
-              style={{ background: "transparent" }}
-            >
-              {/* Icon overlay using position trick via flex */}
-            </div>
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: "var(--muted)" }}>
-              <Icon size={15} style={{ color: "var(--accent)" }} />
-            </div>
-            <div>
-              <p className="text-sm font-medium" style={{ color: "var(--foreground)" }}>{label}</p>
-              <p className="text-xs" style={{ color: "var(--muted-foreground)" }}>{desc}</p>
-            </div>
+      {/* Features — 2-column grid */}
+      <div className="px-4 py-3 grid grid-cols-2 gap-2">
+        {FEATURES.map(({ icon: Icon, label }) => (
+          <div
+            key={label}
+            className="flex items-center gap-2 rounded-xl px-3 py-2"
+            style={{ background: "var(--muted)" }}
+          >
+            <Icon size={13} style={{ color: "var(--accent)" }} className="shrink-0" />
+            <span className="text-xs font-medium truncate" style={{ color: "var(--foreground)" }}>
+              {label}
+            </span>
           </div>
         ))}
       </div>
 
       {/* Actions */}
-      <div className="px-5 pb-6 space-y-2.5">
+      <div className="px-4 pb-4 pt-1 space-y-2">
         {error && (
-          <p className="text-sm text-center" style={{ color: "#ef4444" }}>{error}</p>
+          <p className="text-xs text-center" style={{ color: "#ef4444" }}>{error}</p>
         )}
         <button
           onClick={handlePurchase}
@@ -109,7 +103,7 @@ export function ProGate({ onUnlock }: ProGateProps) {
         <button
           onClick={handleRestore}
           disabled={loading}
-          className="w-full py-2.5 rounded-xl font-medium text-sm transition-opacity hover:opacity-70 disabled:opacity-40"
+          className="w-full py-2 rounded-xl font-medium text-sm transition-opacity hover:opacity-70 disabled:opacity-40"
           style={{ color: "var(--muted-foreground)" }}
         >
           Restore Purchase
