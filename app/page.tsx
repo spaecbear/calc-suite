@@ -50,7 +50,6 @@ export default function Home() {
   const [active, setActive] = useState<CalcId>("basic");
   const [isPro, setIsPro]   = useState(false);
 
-  // 1. Check RevenueCat pro status on mount
   useEffect(() => {
     let cancelled = false;
     isProUser()
@@ -59,24 +58,15 @@ export default function Home() {
     return () => { cancelled = true; };
   }, []);
 
-  // 2. Init AdMob once, then show/hide banner based on pro status
   useEffect(() => {
-    initAds().then(() => {
-      if (isPro) {
-        hideBanner();
-      } else {
-        showBanner();
-      }
-    });
+    initAds().then(() => { isPro ? hideBanner() : showBanner(); });
   }, [isPro]);
 
   const isProCalc = PRO_IDS.includes(active);
   const locked    = isProCalc && !isPro;
+  const isBasic   = active === "basic" && !locked;
 
-  function handleUnlock() {
-    setIsPro(true);
-    hideBanner(); // remove ad immediately on upgrade
-  }
+  function handleUnlock() { setIsPro(true); hideBanner(); }
 
   function renderCalc() {
     if (locked) return <ProGate onUnlock={handleUnlock} />;
@@ -84,23 +74,27 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "var(--background)" }}>
+    <div className="flex flex-col" style={{ height: "100dvh", background: "var(--background)" }}>
       <Header active={active} onChange={setActive} isPro={isPro} />
 
-      <main className="flex-1 px-4 py-5 overflow-y-auto">
-        {/* Calculator */}
-        <div className="max-w-lg mx-auto">
-          {renderCalc()}
+      {isBasic ? (
+        // Basic calculator: no padding, fills all remaining height
+        <div className="flex-1 overflow-hidden">
+          <BasicCalculator />
         </div>
-
-        {/* Spacer so content doesn't hide under the native bottom banner.
-            Invisible on device; visible placeholder on web/dev. */}
-        {!isPro && (
-          <div className="max-w-lg mx-auto mt-4">
-            <AdBanner />
+      ) : (
+        // All other calculators: padded, scrollable
+        <main className="flex-1 overflow-y-auto px-4 py-5">
+          <div className="max-w-lg mx-auto">
+            {renderCalc()}
           </div>
-        )}
-      </main>
+          {!isPro && (
+            <div className="max-w-lg mx-auto mt-4">
+              <AdBanner />
+            </div>
+          )}
+        </main>
+      )}
     </div>
   );
 }

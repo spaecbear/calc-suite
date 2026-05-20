@@ -14,135 +14,81 @@ function fmt(val: string): string {
 
 const BUTTONS = [
   ["C", "+/-", "%", "÷"],
-  ["7", "8", "9", "×"],
-  ["4", "5", "6", "-"],
-  ["1", "2", "3", "+"],
-  ["0", ".", "⌫", "="],
+  ["7", "8",   "9", "×"],
+  ["4", "5",   "6", "-"],
+  ["1", "2",   "3", "+"],
+  ["0", ".",   "⌫", "="],
 ];
 
 export default function BasicCalculator() {
-  const [display, setDisplay] = useState("0");
-  const [stored, setStored] = useState<string | null>(null);
-  const [op, setOp] = useState<Op>(null);
-  const [justEvaled, setJustEvaled] = useState(false);
-  const [waitingForOperand, setWaitingForOperand] = useState(false);
+  const [display, setDisplay]               = useState("0");
+  const [stored, setStored]                 = useState<string | null>(null);
+  const [op, setOp]                         = useState<Op>(null);
+  const [justEvaled, setJustEvaled]         = useState(false);
+  const [waitingForOperand, setWaiting]     = useState(false);
 
   const compute = (a: string, b: string, operation: Op): string => {
-    const x = parseFloat(a);
-    const y = parseFloat(b);
+    const x = parseFloat(a), y = parseFloat(b);
     if (isNaN(x) || isNaN(y)) return "Error";
     switch (operation) {
       case "+": return fmt(String(x + y));
       case "-": return fmt(String(x - y));
       case "×": return fmt(String(x * y));
       case "÷": return y === 0 ? "Error" : fmt(String(x / y));
-      default: return b;
+      default:  return b;
     }
   };
 
   const handleInput = useCallback((btn: string) => {
-    if (btn === "C") {
-      setDisplay("0");
-      setStored(null);
-      setOp(null);
-      setJustEvaled(false);
-      setWaitingForOperand(false);
-      return;
-    }
+    if (btn === "C")    { setDisplay("0"); setStored(null); setOp(null); setJustEvaled(false); setWaiting(false); return; }
+    if (btn === "⌫")   { if (display === "Error" || waitingForOperand) { setDisplay("0"); return; } setDisplay(display.length > 1 ? display.slice(0, -1) : "0"); return; }
+    if (btn === "+/-")  { if (display !== "0" && display !== "Error") setDisplay(display.startsWith("-") ? display.slice(1) : "-" + display); return; }
+    if (btn === "%")    { const n = parseFloat(display); if (!isNaN(n)) setDisplay(fmt(String(n / 100))); return; }
 
-    if (btn === "⌫") {
-      if (display === "Error" || waitingForOperand) { setDisplay("0"); return; }
-      setDisplay(display.length > 1 ? display.slice(0, -1) : "0");
-      return;
-    }
-
-    if (btn === "+/-") {
-      if (display === "0" || display === "Error") return;
-      setDisplay(display.startsWith("-") ? display.slice(1) : "-" + display);
-      return;
-    }
-
-    if (btn === "%") {
-      const num = parseFloat(display);
-      if (!isNaN(num)) setDisplay(fmt(String(num / 100)));
-      return;
-    }
-
-    if (["÷", "×", "-", "+"].includes(btn)) {
-      // Chain: if there's already a pending op and we have fresh input, compute first
-      if (op && stored !== null && !waitingForOperand) {
-        const result = compute(stored, display, op);
-        setStored(result);
-        setDisplay(result);
-      } else {
-        setStored(display);
-      }
-      setOp(btn as Op);
-      setJustEvaled(false);
-      setWaitingForOperand(true);
-      return;
+    if (["÷","×","-","+"].includes(btn)) {
+      if (op && stored !== null && !waitingForOperand) { const r = compute(stored, display, op); setStored(r); setDisplay(r); }
+      else { setStored(display); }
+      setOp(btn as Op); setJustEvaled(false); setWaiting(true); return;
     }
 
     if (btn === "=") {
-      if (op && stored !== null) {
-        const result = compute(stored, display, op);
-        setDisplay(result);
-        setStored(null);
-        setOp(null);
-        setJustEvaled(true);
-        setWaitingForOperand(false);
-      }
+      if (op && stored !== null) { const r = compute(stored, display, op); setDisplay(r); setStored(null); setOp(null); setJustEvaled(true); setWaiting(false); }
       return;
     }
 
-    // Decimal point
     if (btn === ".") {
       const base = waitingForOperand || justEvaled ? "0" : display;
-      if (!base.includes(".")) {
-        setDisplay(base === "Error" ? "0." : base + ".");
-        setJustEvaled(false);
-        setWaitingForOperand(false);
-      }
+      if (!base.includes(".")) { setDisplay(base === "Error" ? "0." : base + "."); setJustEvaled(false); setWaiting(false); }
       return;
     }
 
-    // Digit
-    const replaceDisplay = waitingForOperand || justEvaled || display === "0" || display === "Error";
-    const next = replaceDisplay ? btn : display + btn;
+    const replace = waitingForOperand || justEvaled || display === "0" || display === "Error";
+    const next = replace ? btn : display + btn;
     if (next.replace(".", "").replace("-", "").length > 12) return;
-    setDisplay(next);
-    setJustEvaled(false);
-    setWaitingForOperand(false);
+    setDisplay(next); setJustEvaled(false); setWaiting(false);
   }, [display, stored, op, justEvaled, waitingForOperand]);
 
-  // Keyboard support
   useEffect(() => {
     const map: Record<string, string> = {
-      "0":"0","1":"1","2":"2","3":"3","4":"4",
-      "5":"5","6":"6","7":"7","8":"8","9":"9",
-      ".":".", "Enter":"=", "=":"=",
-      "+":"+", "-":"-", "*":"×", "/":"÷",
+      "0":"0","1":"1","2":"2","3":"3","4":"4","5":"5","6":"6","7":"7","8":"8","9":"9",
+      ".":".", "Enter":"=", "=":"=", "+":"+", "-":"-", "*":"×", "/":"÷",
       "Backspace":"⌫", "Escape":"C", "%":"%",
     };
-    const handler = (e: KeyboardEvent) => {
-      const btn = map[e.key];
-      if (btn) { e.preventDefault(); handleInput(btn); }
-    };
+    const handler = (e: KeyboardEvent) => { const b = map[e.key]; if (b) { e.preventDefault(); handleInput(b); } };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [handleInput]);
 
-  const isOpBtn = (btn: string) => ["÷", "×", "-", "+"].includes(btn);
+  const isOpBtn  = (btn: string) => ["÷","×","-","+"].includes(btn);
   const isActive = (btn: string) => btn === op && stored !== null && waitingForOperand;
 
   return (
-    <div
-      className="rounded-2xl border overflow-hidden shadow-sm"
-      style={{ background: "var(--card)", borderColor: "var(--card-border)" }}
-    >
+    // flex-col so this fills whatever height the parent gives it
+    <div className="flex flex-col h-full" style={{ background: "var(--card)" }}>
+
       {/* Display */}
-      <div className="px-5 pt-6 pb-4" style={{ background: "var(--muted)" }}>
-        <div className="text-right h-5 mb-1">
+      <div className="px-5 pt-5 pb-4 shrink-0" style={{ background: "var(--muted)" }}>
+        <div className="h-5 text-right mb-1">
           {stored && op && (
             <span className="text-sm" style={{ color: "var(--muted-foreground)" }}>
               {stored} {op}
@@ -160,34 +106,40 @@ export default function BasicCalculator() {
         </div>
       </div>
 
-      {/* Button grid */}
-      <div className="grid grid-cols-4 gap-px p-px" style={{ background: "var(--card-border)" }}>
-        {BUTTONS.flat().map((btn, i) => {
-          const isEq = btn === "=";
-          const isOp = isOpBtn(btn);
-          const isFn = ["C", "+/-", "%"].includes(btn);
-          const isDel = btn === "⌫";
-          const active = isActive(btn);
+      {/* Button grid — flex rows that stretch to fill remaining height */}
+      <div
+        className="flex-1 flex flex-col"
+        style={{ gap: 1, background: "var(--card-border)", paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
+        {BUTTONS.map((row, ri) => (
+          <div key={ri} className="flex flex-1" style={{ gap: 1 }}>
+            {row.map((btn) => {
+              const isEq  = btn === "=";
+              const isOp  = isOpBtn(btn);
+              const isFn  = ["C", "+/-", "%"].includes(btn);
+              const isDel = btn === "⌫";
+              const active = isActive(btn);
 
-          let bg = "var(--card)";
-          let color = "var(--foreground)";
+              let bg    = "var(--card)";
+              let color = "var(--foreground)";
+              if (isEq)             { bg = "var(--accent)"; color = "#fff"; }
+              else if (active)      { bg = "var(--accent)"; color = "#fff"; }
+              else if (isOp)        { color = "var(--accent)"; }
+              else if (isFn||isDel) { bg = "var(--muted)"; color = "var(--muted-foreground)"; }
 
-          if (isEq)        { bg = "var(--accent)"; color = "#fff"; }
-          else if (active) { bg = "var(--accent)"; color = "#fff"; }
-          else if (isOp)   { bg = "var(--card)";   color = "var(--accent)"; }
-          else if (isFn || isDel) { bg = "var(--muted)"; color = "var(--muted-foreground)"; }
-
-          return (
-            <button
-              key={i}
-              onClick={() => handleInput(btn)}
-              className="flex items-center justify-center h-16 text-lg font-medium transition-opacity active:opacity-60 hover:opacity-80 select-none"
-              style={{ background: bg, color }}
-            >
-              {btn === "⌫" ? <Delete size={18} /> : btn}
-            </button>
-          );
-        })}
+              return (
+                <button
+                  key={btn + ri}
+                  onClick={() => handleInput(btn)}
+                  className="flex-1 flex items-center justify-center text-xl font-medium transition-opacity active:opacity-50 select-none"
+                  style={{ background: bg, color }}
+                >
+                  {btn === "⌫" ? <Delete size={20} /> : btn}
+                </button>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );
