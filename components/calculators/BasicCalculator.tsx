@@ -86,20 +86,23 @@ export default function BasicCalculator() {
     // flex-col so this fills whatever height the parent gives it
     <div className="flex flex-col h-full" style={{ background: "var(--card)" }}>
 
-      {/* Display */}
-      <div className="px-5 pt-5 pb-4 shrink-0" style={{ background: "var(--muted)" }}>
-        <div className="h-5 text-right mb-1">
+      {/* Display — takes ~28% of total height so buttons don't dominate */}
+      <div
+        className="flex flex-col justify-end px-6 pb-5"
+        style={{ flex: "0 0 28%", background: "var(--muted)" }}
+      >
+        <div className="h-6 text-right mb-2">
           {stored && op && (
-            <span className="text-sm" style={{ color: "var(--muted-foreground)" }}>
+            <span className="text-base" style={{ color: "var(--muted-foreground)" }}>
               {stored} {op}
             </span>
           )}
         </div>
         <div
-          className="text-right font-mono font-semibold leading-none overflow-hidden"
+          className="text-right font-mono font-bold leading-none overflow-hidden"
           style={{
             color: display === "Error" ? "#ef4444" : "var(--foreground)",
-            fontSize: display.length > 10 ? "1.75rem" : display.length > 7 ? "2.25rem" : "3rem",
+            fontSize: display.length > 10 ? "2.25rem" : display.length > 7 ? "2.75rem" : "3.75rem",
           }}
         >
           {display}
