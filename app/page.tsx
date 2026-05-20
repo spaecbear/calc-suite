@@ -65,7 +65,8 @@ export default function Home() {
 
   const isProCalc = PRO_IDS.includes(active);
   const locked    = isProCalc && !isPro;
-  const isBasic   = active === "basic" && !locked;
+  // These calcs fill the full screen with no padding (keyboard-style layout)
+  const isFullscreen = (active === "basic" || active === "scientific") && !locked;
 
   function handleUnlock() { setIsPro(true); hideBanner(); }
 
@@ -78,10 +79,10 @@ export default function Home() {
     <div className="flex flex-col" style={{ height: "100dvh", background: "var(--background)" }}>
       <Header active={active} onChange={setActive} isPro={isPro} />
 
-      {isBasic ? (
-        // Basic calculator: no padding, fills all remaining height
-        <div className="flex-1 overflow-hidden">
-          <BasicCalculator />
+      {isFullscreen ? (
+        // Full-screen keyboard layout — no padding, fills remaining height
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {renderCalc()}
         </div>
       ) : (
         // All other calculators: padded, scrollable

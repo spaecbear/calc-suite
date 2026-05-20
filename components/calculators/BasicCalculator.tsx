@@ -84,7 +84,7 @@ export default function BasicCalculator() {
 
   return (
     // flex-col so this fills whatever height the parent gives it
-    <div className="flex flex-col h-full" style={{ background: "var(--card)" }}>
+    <div className="flex-1 flex flex-col" style={{ background: "var(--card)" }}>
 
       {/* Display — takes ~28% of total height so buttons don't dominate */}
       <div
