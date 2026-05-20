@@ -5,7 +5,7 @@ import { Header } from "@/components/Header";
 import { AdBanner } from "@/components/AdBanner";
 import { ProGate } from "@/components/ProGate";
 import { type CalcId, PRO_IDS } from "@/lib/navItems";
-import { isProUser } from "@/lib/purchases";
+import { isProUser, initPurchases } from "@/lib/purchases";
 import { initAds, showBanner, hideBanner } from "@/lib/ads";
 
 // Free calculators
@@ -59,6 +59,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    initPurchases(); // configure RevenueCat before any purchase calls
     initAds().then(() => { isPro ? hideBanner() : showBanner(); });
   }, [isPro]);
 

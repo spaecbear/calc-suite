@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Lock, Star, Zap, TrendingUp, FlaskConical, BanIcon, Activity, Sigma } from "lucide-react";
 import { purchasePro, restorePurchases } from "@/lib/purchases";
 
+const DEV_MODE = (process.env.NEXT_PUBLIC_REVENUECAT_KEY ?? "appl_REPLACE").startsWith("appl_REPLACE");
+
 interface ProGateProps {
   onUnlock: () => void;
 }
@@ -98,7 +100,7 @@ export function ProGate({ onUnlock }: ProGateProps) {
           className="w-full py-3 rounded-xl font-semibold text-sm transition-opacity hover:opacity-90 disabled:opacity-60"
           style={{ background: "var(--accent)", color: "#fff" }}
         >
-          {loading ? "Processing…" : "Unlock Pro — $2.99"}
+          {loading ? "Processing…" : DEV_MODE ? "Unlock Pro — $2.99 (Test)" : "Unlock Pro — $2.99"}
         </button>
         <button
           onClick={handleRestore}
