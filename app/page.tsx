@@ -80,8 +80,13 @@ export default function Home() {
       <Header active={active} onChange={setActive} isPro={isPro} />
 
       {isFullscreen ? (
-        // Full-screen keyboard layout — no padding, fills remaining height
-        <div className="flex-1 flex flex-col overflow-hidden">
+        // Full-screen keyboard layout — no padding, fills remaining height.
+        // paddingBottom reserves space so the native AdMob banner doesn't
+        // cover the bottom row of buttons on free tier.
+        <div
+          className="flex-1 flex flex-col overflow-hidden"
+          style={!isPro ? { paddingBottom: 60 } : undefined}
+        >
           {renderCalc()}
         </div>
       ) : (
