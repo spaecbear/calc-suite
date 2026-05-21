@@ -25,6 +25,9 @@ import OhmsLawCalculator from "@/components/calculators/OhmsLawCalculator";
 import ScientificCalculator from "@/components/calculators/ScientificCalculator";
 import BmiCalculator from "@/components/calculators/BmiCalculator";
 import CompoundInterestCalculator from "@/components/calculators/CompoundInterestCalculator";
+import TimezoneCalculator from "@/components/calculators/TimezoneCalculator";
+import ProjectorCalculator from "@/components/calculators/ProjectorCalculator";
+import CircuitLoadCalculator from "@/components/calculators/CircuitLoadCalculator";
 
 const FREE_CALCS: Record<string, React.ReactNode> = {
   basic:    <BasicCalculator />,
@@ -44,6 +47,9 @@ const PRO_CALCS: Record<string, React.ReactNode> = {
   scientific: <ScientificCalculator />,
   bmi:        <BmiCalculator />,
   compound:   <CompoundInterestCalculator />,
+  timezone:   <TimezoneCalculator />,
+  projector:  <ProjectorCalculator />,
+  circuit:    <CircuitLoadCalculator />,
 };
 
 export default function Home() {

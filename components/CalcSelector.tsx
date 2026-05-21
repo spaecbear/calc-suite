@@ -15,6 +15,9 @@ import {
   Zap,
   FlaskConical,
   Activity,
+  Clock,
+  MonitorPlay,
+  CircuitBoard,
   ChevronDown,
   Lock,
   type LucideIcon,
@@ -35,6 +38,9 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Zap,
   FlaskConical,
   Activity,
+  Clock,
+  MonitorPlay,
+  CircuitBoard,
 };
 
 interface CalcSelectorProps {
