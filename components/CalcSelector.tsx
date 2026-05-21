@@ -88,8 +88,8 @@ export function CalcSelector({ active, onChange, isPro = false }: CalcSelectorPr
       {/* Dropdown */}
       {open && (
         <div
-          className="absolute left-0 top-full mt-1.5 z-50 w-72 rounded-2xl border shadow-lg overflow-hidden"
-          style={{ background: "var(--card)", borderColor: "var(--card-border)" }}
+          className="absolute left-0 top-full mt-1.5 z-50 w-72 rounded-2xl border shadow-lg overflow-y-auto"
+          style={{ background: "var(--card)", borderColor: "var(--card-border)", maxHeight: "70vh" }}
         >
           {/* Free section */}
           <div className="px-3 pt-2.5 pb-1">
